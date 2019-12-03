@@ -76,29 +76,23 @@ test: test_g test_fast
 	$(HELPER) ./test_g$(BINEXT)
 	$(HELPER) ./test_fast$(BINEXT)
 
-test_g: http_parser_g.o test_g.o
-	$(CC) $(CFLAGS_DEBUG) $(LDFLAGS) http_parser_g.o test_g.o -o $@
+test_g: test_g.o
+	$(CC) $(CFLAGS_DEBUG) $(LDFLAGS) test_g.o -o $@
 
 test_g.o: test.c http_parser.h Makefile
 	$(CC) $(CPPFLAGS_DEBUG) $(CFLAGS_DEBUG) -c test.c -o $@
 
-http_parser_g.o: http_parser.c http_parser.h Makefile
-	$(CC) $(CPPFLAGS_DEBUG) $(CFLAGS_DEBUG) -c http_parser.c -o $@
-
-test_fast: http_parser.o test.o http_parser.h
-	$(CC) $(CFLAGS_FAST) $(LDFLAGS) http_parser.o test.o -o $@
+test_fast: test.o http_parser.h
+	$(CC) $(CFLAGS_FAST) $(LDFLAGS) test.o -o $@
 
 test.o: test.c http_parser.h Makefile
 	$(CC) $(CPPFLAGS_FAST) $(CFLAGS_FAST) -c test.c -o $@
 
-bench: http_parser.o bench.o
-	$(CC) $(CFLAGS_BENCH) $(LDFLAGS) http_parser.o bench.o -o $@
+bench: bench.o
+	$(CC) $(CFLAGS_BENCH) $(LDFLAGS) bench.o -o $@
 
 bench.o: bench.c http_parser.h Makefile
 	$(CC) $(CPPFLAGS_BENCH) $(CFLAGS_BENCH) -c bench.c -o $@
-
-http_parser.o: http_parser.c http_parser.h Makefile
-	$(CC) $(CPPFLAGS_FAST) $(CFLAGS_FAST) -c http_parser.c
 
 test-run-timed: test_fast
 	while(true) do time $(HELPER) ./test_fast$(BINEXT) > /dev/null; done
@@ -106,28 +100,19 @@ test-run-timed: test_fast
 test-valgrind: test_g
 	valgrind ./test_g
 
-libhttp_parser.o: http_parser.c http_parser.h Makefile
-	$(CC) $(CPPFLAGS_FAST) $(CFLAGS_LIB) -c http_parser.c -o libhttp_parser.o
-
-library: libhttp_parser.o
-	$(CC) $(LDFLAGS_LIB) -o $(LIBNAME) $<
-
-package: http_parser.o
-	$(AR) rcs libhttp_parser.a http_parser.o
-
-url_parser: http_parser.o contrib/url_parser.c
+url_parser: contrib/url_parser.c
 	$(CC) $(CPPFLAGS_FAST) $(CFLAGS_FAST) $^ -o $@
 
-url_parser_g: http_parser_g.o contrib/url_parser.c
+url_parser_g: contrib/url_parser.c
 	$(CC) $(CPPFLAGS_DEBUG) $(CFLAGS_DEBUG) $^ -o $@
 
-parsertrace: http_parser.o contrib/parsertrace.c
+parsertrace: contrib/parsertrace.c
 	$(CC) $(CPPFLAGS_FAST) $(CFLAGS_FAST) $^ -o parsertrace$(BINEXT)
 
-parsertrace_g: http_parser_g.o contrib/parsertrace.c
+parsertrace_g: contrib/parsertrace.c
 	$(CC) $(CPPFLAGS_DEBUG) $(CFLAGS_DEBUG) $^ -o parsertrace_g$(BINEXT)
 
-tags: http_parser.c http_parser.h test.c
+tags: http_parser.h test.c
 	ctags $^
 
 install: library
@@ -150,7 +135,6 @@ uninstall:
 
 clean:
 	rm -f *.o *.a tags test test_fast test_g \
-		http_parser.tar libhttp_parser.so.* \
 		url_parser url_parser_g parsertrace parsertrace_g \
 		*.exe *.exe.so
 

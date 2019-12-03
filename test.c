@@ -41,7 +41,7 @@
 
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 
-#define ARRAY_SIZE(x) (sizeof(x) / sizeof(*x))
+#define TEST_ARRAY_SIZE(x) (sizeof(x) / sizeof(*x))
 
 static http_parser parser;
 
@@ -1377,7 +1377,7 @@ const struct message responses[] =
   ,.body= "these headers are from http://news.ycombinator.com/"
   }
 
-#define PROXY_CONNECTION 6
+#define TEST_PROXY_CONNECTION 6
 , {.name="proxy connection"
   ,.type= HTTP_RESPONSE
   ,.raw= "HTTP/1.1 200 OK\r\n"
@@ -4233,23 +4233,23 @@ main (void)
   test_simple_type("HTTP/1.1\t200 OK\r\n\r\n", HPE_INVALID_VERSION, HTTP_RESPONSE);
   test_simple_type("\rHTTP/1.1\t200 OK\r\n\r\n", HPE_INVALID_VERSION, HTTP_RESPONSE);
 
-  for (i = 0; i < ARRAY_SIZE(responses); i++) {
+  for (i = 0; i < TEST_ARRAY_SIZE(responses); i++) {
     test_message(&responses[i]);
   }
 
-  for (i = 0; i < ARRAY_SIZE(responses); i++) {
+  for (i = 0; i < TEST_ARRAY_SIZE(responses); i++) {
     test_message_pause(&responses[i]);
   }
 
-  for (i = 0; i < ARRAY_SIZE(responses); i++) {
+  for (i = 0; i < TEST_ARRAY_SIZE(responses); i++) {
     test_message_connect(&responses[i]);
   }
 
-  for (i = 0; i < ARRAY_SIZE(responses); i++) {
+  for (i = 0; i < TEST_ARRAY_SIZE(responses); i++) {
     if (!responses[i].should_keep_alive) continue;
-    for (j = 0; j < ARRAY_SIZE(responses); j++) {
+    for (j = 0; j < TEST_ARRAY_SIZE(responses); j++) {
       if (!responses[j].should_keep_alive) continue;
-      for (k = 0; k < ARRAY_SIZE(responses); k++) {
+      for (k = 0; k < TEST_ARRAY_SIZE(responses); k++) {
         test_multiple3(&responses[i], &responses[j], &responses[k]);
       }
     }
@@ -4470,19 +4470,19 @@ main (void)
 
 
   /* check to make sure our predefined requests are okay */
-  for (i = 0; i < ARRAY_SIZE(requests); i++) {
+  for (i = 0; i < TEST_ARRAY_SIZE(requests); i++) {
     test_message(&requests[i]);
   }
 
-  for (i = 0; i < ARRAY_SIZE(requests); i++) {
+  for (i = 0; i < TEST_ARRAY_SIZE(requests); i++) {
     test_message_pause(&requests[i]);
   }
 
-  for (i = 0; i < ARRAY_SIZE(requests); i++) {
+  for (i = 0; i < TEST_ARRAY_SIZE(requests); i++) {
     if (!requests[i].should_keep_alive) continue;
-    for (j = 0; j < ARRAY_SIZE(requests); j++) {
+    for (j = 0; j < TEST_ARRAY_SIZE(requests); j++) {
       if (!requests[j].should_keep_alive) continue;
-      for (k = 0; k < ARRAY_SIZE(requests); k++) {
+      for (k = 0; k < TEST_ARRAY_SIZE(requests); k++) {
         test_multiple3(&requests[i], &requests[j], &requests[k]);
       }
     }
