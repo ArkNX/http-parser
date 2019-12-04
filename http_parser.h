@@ -385,19 +385,19 @@ struct http_parser_url {
  *   unsigned patch = version & 255;
  *   printf("http_parser v%u.%u.%u\n", major, minor, patch);
  */
-unsigned long http_parser_version(void);
+static unsigned long http_parser_version(void);
 
-void http_parser_init(http_parser *parser, enum http_parser_type type);
+static void http_parser_init(http_parser *parser, enum http_parser_type type);
 
 
 /* Initialize http_parser_settings members to 0
  */
-void http_parser_settings_init(http_parser_settings *settings);
+static void http_parser_settings_init(http_parser_settings *settings);
 
 
 /* Executes the parser. Returns number of parsed bytes. Sets
  * `parser->http_errno` on error. */
-size_t http_parser_execute(http_parser *parser,
+static size_t http_parser_execute(http_parser *parser,
                            const http_parser_settings *settings,
                            const char *data,
                            size_t len);
@@ -409,36 +409,36 @@ size_t http_parser_execute(http_parser *parser,
  * If you are the server, respond with the "Connection: close" header.
  * If you are the client, close the connection.
  */
-int http_should_keep_alive(const http_parser *parser);
+static int http_should_keep_alive(const http_parser *parser);
 
 /* Returns a string version of the HTTP method. */
-const char *http_method_str(enum http_method m);
+static const char *http_method_str(enum http_method m);
 
 /* Returns a string version of the HTTP status code. */
-const char *http_status_str(enum http_status s);
+static const char *http_status_str(enum http_status s);
 
 /* Return a string name of the given error */
-const char *http_errno_name(enum http_errno err);
+static const char *http_errno_name(enum http_errno err);
 
 /* Return a string description of the given error */
-const char *http_errno_description(enum http_errno err);
+static const char *http_errno_description(enum http_errno err);
 
 /* Initialize all http_parser_url members to 0 */
-void http_parser_url_init(struct http_parser_url *u);
+static void http_parser_url_init(struct http_parser_url *u);
 
 /* Parse a URL; return nonzero on failure */
-int http_parser_parse_url(const char *buf, size_t buflen,
+static int http_parser_parse_url(const char *buf, size_t buflen,
                           int is_connect,
                           struct http_parser_url *u);
 
 /* Pause or un-pause the parser; a nonzero value pauses */
-void http_parser_pause(http_parser *parser, int paused);
+static void http_parser_pause(http_parser *parser, int paused);
 
 /* Checks if this is the final chunk of the body. */
-int http_body_is_final(const http_parser *parser);
+static int http_body_is_final(const http_parser *parser);
 
 /* Change the maximum header size provided at compile time. */
-void http_parser_set_max_header_size(uint32_t size);
+static void http_parser_set_max_header_size(uint32_t size);
 
 static uint32_t max_header_size = HTTP_MAX_HEADER_SIZE;
 
@@ -903,7 +903,7 @@ static uint32_t max_header_size = HTTP_MAX_HEADER_SIZE;
       HTTP_ERRNO_MAP(HTTP_STRERROR_GEN)};
 #undef HTTP_STRERROR_GEN
 
-  int http_message_needs_eof(const http_parser *parser);
+  static int http_message_needs_eof(const http_parser *parser);
 
   /* Our URL parser.
  *
@@ -1086,7 +1086,7 @@ static uint32_t max_header_size = HTTP_MAX_HEADER_SIZE;
     return s_dead;
   }
 
-  size_t http_parser_execute(http_parser *parser,
+  static size_t http_parser_execute(http_parser *parser,
                              const http_parser_settings *settings,
                              const char *data,
                              size_t len)
@@ -2738,7 +2738,7 @@ static uint32_t max_header_size = HTTP_MAX_HEADER_SIZE;
   }
 
   /* Does the parser need to see an EOF to find the end of the message? */
-  int http_message_needs_eof(const http_parser *parser)
+  static int http_message_needs_eof(const http_parser *parser)
   {
     if (parser->type == HTTP_REQUEST)
     {
@@ -2762,7 +2762,7 @@ static uint32_t max_header_size = HTTP_MAX_HEADER_SIZE;
     return 1;
   }
 
-  int http_should_keep_alive(const http_parser *parser)
+  static int http_should_keep_alive(const http_parser *parser)
   {
     if (parser->http_major > 0 && parser->http_minor > 0)
     {
@@ -2784,13 +2784,13 @@ static uint32_t max_header_size = HTTP_MAX_HEADER_SIZE;
     return !http_message_needs_eof(parser);
   }
 
-  const char *
+  static const char *
   http_method_str(enum http_method m)
   {
     return ELEM_AT(method_strings, m, "<unknown>");
   }
 
-  const char *
+  static const char *
   http_status_str(enum http_status s)
   {
     switch (s)
@@ -2805,7 +2805,7 @@ static uint32_t max_header_size = HTTP_MAX_HEADER_SIZE;
     }
   }
 
-  void
+  static void
   http_parser_init(http_parser *parser, enum http_parser_type t)
   {
     void *data = parser->data; /* preserve application data */
@@ -2816,20 +2816,20 @@ static uint32_t max_header_size = HTTP_MAX_HEADER_SIZE;
     parser->http_errno = HPE_OK;
   }
 
-  void
+  static void
   http_parser_settings_init(http_parser_settings *settings)
   {
     memset(settings, 0, sizeof(*settings));
   }
 
-  const char *
+  static const char *
   http_errno_name(enum http_errno err)
   {
     assert(((size_t)err) < ARRAY_SIZE(http_strerror_tab));
     return http_strerror_tab[err].name;
   }
 
-  const char *
+  static const char *
   http_errno_description(enum http_errno err)
   {
     assert(((size_t)err) < ARRAY_SIZE(http_strerror_tab));
@@ -3023,13 +3023,13 @@ static uint32_t max_header_size = HTTP_MAX_HEADER_SIZE;
     return 0;
   }
 
-  void
+  static void
   http_parser_url_init(struct http_parser_url *u)
   {
     memset(u, 0, sizeof(*u));
   }
 
-  int http_parser_parse_url(const char *buf, size_t buflen, int is_connect,
+  static int http_parser_parse_url(const char *buf, size_t buflen, int is_connect,
                             struct http_parser_url *u)
   {
     enum state s;
@@ -3162,7 +3162,7 @@ static uint32_t max_header_size = HTTP_MAX_HEADER_SIZE;
     return 0;
   }
 
-  void
+  static void
   http_parser_pause(http_parser *parser, int paused)
   {
     /* Users should only be pausing/unpausing a parser that is not in an error
@@ -3181,12 +3181,12 @@ static uint32_t max_header_size = HTTP_MAX_HEADER_SIZE;
     }
   }
 
-  int http_body_is_final(const struct http_parser *parser)
+  static int http_body_is_final(const struct http_parser *parser)
   {
     return parser->state == s_message_done;
   }
 
-  unsigned long
+  static  unsigned long
   http_parser_version(void)
   {
     return HTTP_PARSER_VERSION_MAJOR * 0x10000 |
@@ -3194,7 +3194,7 @@ static uint32_t max_header_size = HTTP_MAX_HEADER_SIZE;
            HTTP_PARSER_VERSION_PATCH * 0x00001;
   }
 
-  void
+  static void
   http_parser_set_max_header_size(uint32_t size)
   {
     max_header_size = size;
